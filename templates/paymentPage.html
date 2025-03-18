@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CulturyUS - Payments</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="payment-container">
+            <div class="merchantDiv">
+                <div class="payingTo-container">
+                    <h2>Paying Securely Through EthicalPay!</h2>
+                    <h4>Secure, Transparent, Ethical!<br>Seamless Payment Integration for Your Projects!<br>You have to pay ₹ {{.cost}}</h4>
+                </div>
+                <br>
+                <p>Choose Payment Option: </p>
+                <ul>
+                    <li onclick="UPIFunc()">UPI</li>
+                    <li onclick="QRFunc()">QR</li>
+                    <li onclick="DCFunc()">Debit/Credit Card</li>
+                </ul>
+            </div>
+            <div class="paymentMode">
+                <div class="UPIDiv" id="UPIDiv">
+                    <h2>UPI Details</h2>
+                    <form action="/paymentres" method="POST" onsubmit="return validateUPI()">
+                        <label for="upiId">UPI ID:</label>
+                        <input type="text" id="upiId" name="upiId" required>
+                        <span id="error-message" style="color: red; display: none;">Invalid UPI ID</span>
+                        <br>
+                        <input type="hidden" name="cost" value={{.cost}}>
+                        <input type="hidden" name="url" value={{.callbackurl}}>                       
+                        <input type="submit" name="upibtn" value="Proceed">
+                        <input type="reset" value="Cancel">
+                    </form>
+                </div>
+                <div class="QRDiv" id="QRDiv">
+                    <img src="/static/img/QR.png">
+                    <p id="para">Pay Using any Platform</p>
+                </div>
+                <div class="debitcreditDiv" id="debitcreditDiv">
+                    <h2>Pay Using Debit/Credit Card</h2>
+                    <form action="/paymentres" method="POST" onsubmit="return validateDebitCredit()">
+                        <label for="tb2">Card No: </label><br>
+                        <input type="text" name="tb2" placeholder="XXXX XXXX XXXX XXXX" id="tb2"><br>
+                        <label for="tb3">Expiry Date:</label><br>
+                        <input type="month" name="tb3">
+                        <input type="hidden" name="cost" value={{.cost}}>
+                        <input type="hidden" name="url" value={{.callbackurl}}>    
+                        <input type="submit" name="dcbtn" value="Validate">
+                    </form> 
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
+        </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 1.5) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+
+        function validateUPI() {
+        const upiInput = document.getElementById("upiId");
+        const errorMessage = document.getElementById("error-message");
+        const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z]{3,20}$/;
+        if (!upiRegex.test(upiInput.value)) {
+            errorMessage.style.display = "block";
+            return false; 
+        }
+        errorMessage.style.display = "none"; 
+        return true;
+    }
+    function validateDebitCredit() {
+    const cardno = document.getElementById('tb2').value.trim();
+    const cardRegex = /^(?:4\d{15}|5[1-5]\d{14}|3[47]\d{13}|6(?:011|5\d{2})\d{12}|\d{16})$/;
+
+    if (!cardRegex.test(cardno)) {
+        alert("Invalid card number. Please enter a valid debit/credit card number.");
+        return false;
+    }
+    return true;
+}
+
+        function UPIFunc(){
+            document.getElementById('UPIDiv').style.display='block';
+            document.getElementById('QRDiv').style.display='none';
+            document.getElementById('debitcreditDiv').style.display='none';
+        }
+        function QRFunc(){
+            document.getElementById('UPIDiv').style.display='none';
+            document.getElementById('QRDiv').style.display='block';
+            document.getElementById('debitcreditDiv').style.display='none';
+            const countdownElement = document.getElementById('para');
+
+            for (let i = 60; i >= 0; i--) {
+                setTimeout(() => {
+                    countdownElement.innerText = `Do Payment within ${i} seconds...`;
+                    if (i === 0) {
+                    sendQRPaymentRequest();
+                }
+            }, (60 - i) * 1000); 
+        }
+
+        } 
+        function sendQRPaymentRequest() {
+			const form = document.createElement("form");
+			form.setAttribute("method", "POST");
+			form.setAttribute("action", "/QRpaymentres");
+            const inputCost = document.createElement("input");
+            inputCost.type = "hidden";
+            inputCost.name = "cost";
+            inputCost.value = "{{.cost}}"; 
+            form.appendChild(inputCost);
+            const inputCallback = document.createElement("input");
+            inputCallback.type = "hidden";
+            inputCallback.name = "myurl";
+            inputCallback.value = "{{.callbackurl}}"; 
+            form.appendChild(inputCallback);
+			document.body.appendChild(form);
+			form.submit();
+}
+        function DCFunc(){
+            document.getElementById('UPIDiv').style.display='none';
+            document.getElementById('QRDiv').style.display='none';
+            document.getElementById('debitcreditDiv').style.display='block';
+        }
+    </script>
+</body>
+</html>

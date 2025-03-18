@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EthicalPay - API</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                        <ul>
+                            <a href="/api"><li>API</li></a>
+                            <a href="/transactions"><li>Transactions</li></a>
+                            <a href="/documentation"><li>Documentation</li></a>
+                        </ul>
+                    </div>
+                </div>
+                <span class="toggle-bar">☰</span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="apiContainer">
+            <div class="apiGenerationContainer">
+                <h2>Let's get Started! Generate Your API Key!</h2>
+                <form action="/generateAPI" method="POST" name="myform" onsubmit="return validate()">
+                   <label for="tb1">Project Name: </label><br>
+                   <input type="text" name="tb1" required><br>
+                   <label for="tb2">Backend Technology: </label><br>
+                   <select name="tb2">
+                        <option value="GoLang">Golang</option>
+                        <option value="PHP">PHP</option>
+                        <option value="Python">Python</option>
+                        <option value="Java">Java</option>
+                        <option value="Rust">Rust</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Others">Others</option>
+                   </select><br>
+                   <input type="submit" value="Generate Key">
+                   <button onclick="hide()">API Keys 🔑</button>
+                </form>
+                
+            </div>
+            
+            </div>
+    </main>
+
+    <footer>
+        <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
+        </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 1.5) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+
+        function hide(){
+            window.location='/apiData';
+        }
+        function validate(){
+            let project = document.forms['myform']['tb1'].value.trim();
+            let projectPatt = /^[A-Za-z]{5,20}$/;
+            if (!projectPatt.test(project)) {
+                alert('Only characters allowed min 5 & max 20.');
+                return false;
+            }
+            return true;
+        }
+        let togglemenu = document.querySelector(".toggle-bar");
+let navmenu = document.querySelector(".navbar .nav-links .links ul");
+
+togglemenu.addEventListener("click", () => {
+    navmenu.classList.toggle("showMenus");
+    console.log("Menu content:", navmenu.innerHTML);
+});
+    </script>
+</body>
+</html>

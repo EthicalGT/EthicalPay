@@ -1,0 +1,654 @@
+@font-face {
+    font-family: 'Myfam';
+    src: url('/static/fonts/Poppins-Regular.woff');
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Myfam', Arial, sans-serif; 
+}
+body * {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px 20px; 
+    background-color: #fff;
+    height: auto; 
+    position: relative;
+}
+
+.navbar .logo {
+    font-size: 30px; 
+    display: flex;
+}
+
+.navbar .logo img{
+    width: 50px;
+    height: 50px;
+}
+.navbar .logo p{
+    padding: 5px 10px;
+    font-size: 25px;
+    font-weight: bold;
+}
+.navbar .logo p span{
+    color: #00CED1;
+}
+.navbar .nav-links .links ul {
+    list-style-type: none;
+    display: flex;
+}
+
+.navbar .nav-links .links ul li {
+    text-align: center;
+    padding: 0 20px;
+    background-color: transparent;
+    border-radius: 8px; 
+    margin: 0px 10px;
+    color: #00CED1; 
+    transition: 1s ease-in-out;
+    cursor: pointer;
+}
+.navbar .nav-links .links ul li:hover{
+    background-color: #00CED1;
+    color: #fff;
+}
+
+.navbar .nav-links a {
+    text-decoration: none; 
+    color: #333; 
+}
+.navbar .nav-links a:hover {
+    color: #fff;
+}
+
+
+main .payment-container{
+    width: 80%;
+    margin: 30px 10%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.payment-container .merchantDiv{
+    width: 35%;
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+    height: 80vh;
+}
+.merchantDiv .payingTo-container{
+    padding: 5px 10px;
+    background-color: #00CED1;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    color: #fff;
+}
+
+.payingTo-container select{
+    background-color: #fff;
+    color: #00CED1;
+    height: 35px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    outline: none;
+    width: 98%;
+    margin: 10px 1%;
+}
+.merchantDiv ul,p{
+    list-style-type: none;
+    padding: 5px 10px;
+}
+.merchantDiv li{
+    padding: 7px 5px;
+    cursor: pointer;
+}
+.merchantDiv ul li:hover{
+    background-color: #00CED1;
+    border-radius: 8px;
+    color: #fff;
+}
+.paymentMode{
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+    width: 60%;
+    height: 80vh;
+}
+
+.paymentMode .UPIDiv{
+    display: none;
+    width: 80%;
+    margin:5% 10%;
+}
+.UPIDiv label{
+    width: 60%;
+    margin: 10px 20%;
+    color: #000;
+    font-weight: bold;
+    font-size: 16px;
+
+}
+.UPIDiv form input[type="text"]{
+    width: 60%;
+    margin: 10px 20%;
+    border: 1px solid #00CED1;
+    color: #00CED1;
+    height: 40px;
+    border-radius: 8px;
+}
+.UPIDiv form #error-message{
+    width: 60%;
+    margin: 2px 20%;
+}
+.UPIDiv form input[type="submit"], input[type="reset"]{
+    width: 60%;
+    margin: 10px 20%;
+    height: 40px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+    background-color: #00CED1;
+    transition: 0.7s ease-in-out;
+    cursor: pointer;
+}
+.UPIDiv form input[type="submit"]:hover{
+    background-color: #289a9c;
+}
+.UPIDiv form input[type="reset"]:hover{
+    background-color: #289a9c;
+}
+.UPIDiv h2{
+    width: 60%;
+    margin: 10px 20%;
+}
+.QRDiv{
+    display: none;
+    width: 60%;
+    margin: 5% 20%;
+}
+.QRDiv img{
+    width: 60%;
+    margin: 5px 20%;
+    height: auto;
+}
+.QRDiv p{
+    text-align: center;
+}
+.debitcreditDiv{
+    display: none;
+    width: 80%;
+    margin:5% 10%;
+}
+.debitcreditDiv h2{
+    width: 80%;
+    margin: 5px 10%;
+}
+.debitcreditDiv form{
+    margin: 3% 0px;
+}
+.debitcreditDiv form input[type="text"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    border: 1px solid #00CED1;
+    color: #00CED1;
+    border-radius: 8px;
+}
+.debitcreditDiv form input[type="number"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    border: 1px solid #00CED1;
+    color: #00CED1;
+    border-radius: 8px;
+}
+
+
+.debitcreditDiv form label{
+    width: 80%;
+    margin: 10px 10%;
+
+}
+.debitcreditDiv form input[type="month"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    border: 1px solid #00CED1;
+    color: #00CED1;
+    border-radius: 8px;
+}
+.debitcreditDiv form input[type="submit"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    border: 1px solid #00CED1;
+    background-color: #00CED1;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.9s ease-in-out;
+    cursor: pointer;
+}
+.debitcreditDiv form input[type="submit"]:hover{
+    background-color: #149ea0;
+}
+main .accessContainer{
+    width: 100%;
+    height: 90vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+main .accessContainer .signINContainer{
+    width: 30%;
+    margin: 10px 35%;
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+}
+main .accessContainer .signUPContainer{
+    width: 30%;
+    margin: 10px 35%;
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+    display: none;
+}
+main .accessContainer .signINContainer input[type="email"], input[type="password"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    color: #00CED1;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+}
+main .accessContainer .signINContainer input[type="submit"]{
+    width: 80%;
+    margin: 20px 10%;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    background-color: #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    transition: 1s ease-in-out;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+
+}
+
+main .accessContainer .signUPContainer input[type="text"],input[type="email"], input[type="password"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    color: #00CED1;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+}
+main .accessContainer .signUPContainer input[type="submit"]{
+    width: 80%;
+    margin: 20px 10%;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    background-color: #34e9ec;
+    outline: none;
+    padding: 0px 5px;
+    transition: 1s ease-in-out;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+main .accessContainer .signINContainer input[type="submit"]:hover{
+    background-color: #00CED1;
+}
+main .accessContainer .signUPContainer input[type="submit"]:hover{
+    background-color: #00CED1;
+}
+main .accessContainer .signINContainer label{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0px 5px;
+}
+main .accessContainer .signUPContainer label{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0px 5px;
+}
+main .accessContainer .signINContainer h2{
+    padding: 20px 0px;
+    text-align: center;
+}
+main .accessContainer .signUPContainer h2{
+    padding: 20px 0px;
+    text-align: center;
+} 
+main .homeContainer{
+    width: 80%;
+    margin: 5% 10%;
+}
+.homeContainer .imgContainer{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.imgContainer .homeIMG{
+    width: 40%;
+}
+.imgContainer .homeIMG img{
+    width: 90%;
+    margin: 10px 5%;  
+}
+.imgContainer .homeDESC{
+    width: 60%;
+    text-align: justify;
+}
+.imgContainer .homeDESC p{
+    padding: 10px 10px;
+    text-align: justify;
+}
+.imgContainer .homeDESC h2{
+    font-size: 40px;
+    padding-top: 10%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.imgContainer .homeDESC button{
+    width: 150px;
+    height: 40px;
+    border: 1px solid #00CED1;
+    color: #00CED1;
+    border-top-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 16px;
+    background-color: transparent;
+    transition: 0.8s ease-in-out;
+    margin: 15px 10px;
+    cursor: pointer;
+}
+.imgContainer .homeDESC button:hover{
+    background-color: #00CED1;
+    color: #fff;
+}
+main .apiContainer{
+    width: 80%;
+    margin: 5% 10%;
+}
+.apiContainer .apiGenerationContainer{
+    width: 80%;
+    margin: 5% 10%;
+}
+.apiGenerationContainer form input[type="text"],select{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    color: #00CED1;
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+}
+.apiGenerationContainer h2{
+    width: 80%;
+    margin: 10px 10%;
+}
+.apiGenerationContainer form label{
+    width: 80%;
+    margin: 10px 10%;
+    padding: 0px 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.apiGenerationContainer form button{
+    width: 80%;
+    margin: 20px 10%;
+    height: 40px;
+    color: #00CED1;
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+    transition: 0.8s all;
+    cursor: pointer;
+}
+.apiGenerationContainer button:hover{
+    color: #fff;
+    background-color: #00CED1;
+}
+.apiContainer button{
+    width: 40%;
+    margin: 20px 30%;
+    height: 40px;
+    color: #00CED1;
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+    transition: 0.8s all;
+    cursor: pointer;
+}
+.apiContainer button:hover{
+    color: #fff;
+    background-color: #00CED1;
+}
+.apikeysInfo {
+    width: 80%;
+    margin: 10px 10%;
+    display: block;
+}
+#closebtn{
+    width: 60%;
+    margin: 10px 20%;
+    background-color: #00CED1;
+}
+.apikeysInfo h2,h4{
+    width: 80%;
+    margin: 10px 10%;
+}
+.apikeysInfo table{
+    overflow: scroll;
+    width: 80%;
+    margin: 10px 10%;
+    border: 1px solid #34e9ec;
+    border: 8px;
+}
+.apikeysInfo table tr th{
+    background-color: #00CED1;
+    color:#fff;
+}
+.apikeysInfo table td{
+    color: #34e9ec;
+    padding: 10px 10px;
+}
+.apiGenerationContainer form input[type="submit"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    color: #fff;
+    background-color: #34e9ec;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.8s ease-in-out;
+}
+.apiGenerationContainer form input[type="submit"]:hover{
+    background-color: #00CED1;
+}
+main .transactionsContainer{
+    width: 80%;
+    margin: 10px 10%;
+}
+main .transactionsContainer p{
+    text-align: justify;
+    padding: 3% 0px;
+}
+main .transactionsContainer h3{
+    margin: 3% 0px;
+    border: 1px solid #00CED1;
+    background-color: #00CED1;
+    color: #fff;
+    padding: 5px 5px;
+}
+main .transactionsContainer .transactionsDIV{
+    width: 80%;
+    margin: 10px 10%;
+    display: none;
+}
+.transactionsDIV table{
+    width: 100%;
+}
+.transactionsDIV table th{
+    background-color: #00CED1;
+}
+.transactionsDIV table td{
+    color: #00CED1;
+    text-align: center;
+}
+
+.toggle-bar{
+    margin: 10px 10px;
+    color: #00CED1;
+    font-weight: bolder;
+    display: none;
+}
+footer p{
+    text-align: center;
+}
+footer p img{
+    width: 20px;
+    height: 20px;
+}
+#openbtn{
+    bottom: 0;
+    right: 0;
+    position: fixed;
+}
+.note{
+    display: none;
+}
+@media only screen and (max-width: 768px) {
+    
+    .navbar {
+        flex-direction: row; 
+        align-items: flex-start;
+    }
+    .navbar .nav-links .links ul {
+        flex-direction: column; 
+        width: 100%; 
+        display: none;
+    }
+    .navbar .nav-links .links{
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+    .navbar .nav-links .links ul li {
+        border: none;
+        border-radius: 0px;
+        padding: 5px 0; 
+        margin: 2px 0px;
+        width: 100%; 
+        border-radius: 8px;
+        text-align: center;
+    }
+    .toggle-bar{
+        display: flex;
+        cursor: pointer;
+        width: 10px;
+    }
+    .showMenus {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        width: 100%;
+        top: 30px;
+        cursor: pointer;
+        text-align: center; 
+        gap: 5px;
+        float: right;
+        height: auto;
+        padding: 0px;  
+        cursor: pointer;
+        z-index: 5;
+    }
+    .navbar .nav-links .links ul.showMenus {
+        display: flex;
+        opacity: 1;
+        width: 100%;
+    }
+    main .payment-container{
+        flex-direction: column;
+    }
+    .payment-container .merchantDiv{
+        width: 50%;
+        margin: 10px 25%;
+    }
+    .payment-container .paymentMode{
+        width: 50%;
+        margin: 10px 25%;
+    }
+    .apikeysInfo{
+        display: none;
+    }
+    .note{
+        display: block;
+    }
+    .homeContainer .imgContainer .homeIMG{
+        width: 100%;
+    } 
+    .homeContainer .imgContainer .homeDESC{
+        width: 100%;
+    }
+    .homeContainer .imgContainer .homeIMG img{
+        width: 100%;
+    }
+    .homeContainer .imgContainer{
+        flex-direction: column;
+    }
+}

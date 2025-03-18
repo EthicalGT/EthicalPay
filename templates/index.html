@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EthicalPay</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                    <ul>
+                        <li onclick="showI()">SignIN</li>
+                        <li onclick="showII()">SignUP</li>
+                        </ul>
+                </div>
+                </div>
+                <span class="toggle-bar">☰</span>
+                </div>
+            </nav>
+    </header>
+    <main>
+        <div class="accessContainer">
+        <div class="signINContainer">
+            <h2>Welcome Back!</h2>
+            <form action="/userLogin" method="POST" name="loginForm" onsubmit="return validateI()">
+                <label for="tb1">Email: </label><br>
+                <input type="email" name="tb1" required><br>
+                <label for="tb2">Password: </label><br>
+                <input type="password" name="tb2" required><br>
+                <input type="submit" name="submit" value="Login">
+                </form>
+            </div>
+            <div class="signUPContainer">
+                <h2>EthicalPay Registration Awaits!</h2>
+            <form action="/userRegistration" method="POST" name="registrationForm" onsubmit="return validateII()">
+                <label for="tb1">Name: </label><br>
+                <input type="text" name="tb1" required><br>
+                <label for="tb2">Email: </label><br>
+                <input type="email" name="tb2" required><br>
+                <label for="tb3">Create Password: </label><br>
+                <input type="password" name="tb3" required><br>
+                <input type="submit" name="submit" value="Register">
+                </form>
+                </div>
+                </div>
+        </main>
+        <footer>
+            <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
+            </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 2.0) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+
+            function validateI() {
+            let email = document.loginForm.tb1.value.trim();
+            let password = document.loginForm.tb2.value.trim();
+            let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
+            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+                alert("Enter a valid email address!");
+                return false;
+            }
+            if (!passwordRegex.test(password)) {
+                alert("Password must be 8-12 characters long, with at least 1 uppercase, 1 lowercase, 1 number, and 1 special character!");
+                return false;
+            }
+            return true;
+        }
+        function validateII() {
+            let name = document.registrationForm.tb1.value.trim();
+            let email = document.registrationForm.tb2.value.trim();
+            let password = document.registrationForm.tb3.value.trim();
+
+            let nameRegex = /^[A-Za-z\s]{3,}$/; 
+            let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
+
+            if (!nameRegex.test(name)) {
+                alert("Name must be at least 3 characters long and contain only letters and spaces!");
+                return false;
+            }
+            if (!emailRegex.test(email)) {
+                alert("Enter a valid email address!");
+                return false;
+            }
+            if (!passwordRegex.test(password)) {
+                alert("Password must be 8-12 characters long, with at least 1 uppercase, 1 lowercase, 1 number, and 1 special character!");
+                return false;
+            }
+            return true;
+        }
+        function showI() {
+            document.querySelector('.signINContainer').style.display = 'block';
+            document.querySelector('.signUPContainer').style.display = 'none';
+        }
+        function showII() {
+            document.querySelector('.signINContainer').style.display = 'none';
+            document.querySelector('.signUPContainer').style.display = 'block';
+        }
+        let togglemenu = document.querySelector(".toggle-bar");
+let navmenu = document.querySelector(".navbar .nav-links .links ul");
+
+togglemenu.addEventListener("click", () => {
+    navmenu.classList.toggle("showMenus");
+
+    // Log all elements inside .showMenus
+    console.log("Menu content:", navmenu.innerHTML);
+
+    // Log all hyperlinks inside .showMenus
+    let links = navmenu.querySelectorAll("a");
+    console.log("Hyperlinks found:", links);
+
+    links.forEach(link => console.log("Link:", link.href, "Text:", link.textContent));
+});
+document.addEventListener("click", (event) => {
+    if (event.target.matches("li")) {
+        console.log("Clicked:", event.target.textContent);
+        if (event.target.textContent === "SignIN") showI();
+        if (event.target.textContent === "SignUP") showII();
+    }
+});
+
+
+
+    </script>
+</body>
+</html>

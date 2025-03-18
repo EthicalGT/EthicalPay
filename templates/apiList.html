@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EthicalPay - API</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                        <ul>
+                            <a href="/api"><li>API</li></a>
+                            <a href="/transactions"><li>Transactions</li></a>
+                            <a href="/documentation"><li>Documentation</li></a>
+                        </ul>
+                    </div>
+                </div>
+                <span class="toggle-bar">☰</span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="apiContainer">
+            <div class="apikeysInfo">
+                <h2>Generated Keys</h2>
+                <h4>Following are your generated API keys:</h4>
+
+                {{ if .apis }}
+                <table>
+                    <tr>
+                        <th>API ID</th>
+                        <th>API Key</th>
+                        <th>Project</th>
+                        <th>Created On</th>
+                    </tr>
+                    {{ range .apis }}
+                    <tr>
+                        <td>{{ .APIId }}</td>
+                        <td>{{ .APIKey }}</td>
+                        <td>{{ .Project }}</td>
+                        <td>{{ .CreatedOn }}</td>
+                    </tr>
+                    {{ end }}
+                </table>
+                {{ else }}
+                <p>No Transactions Performed!</p>
+                {{ end }}
+            </div>
+            <p class="note">Kindly enable Desktop Mode to view Your API Keys, Thank You!</p>
+            <button onclick="closePage()">Close</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
+        </footer>
+
+    <script>
+        let togglemenu = document.querySelector(".toggle-bar");
+let navmenu = document.querySelector(".navbar .nav-links .links ul");
+
+togglemenu.addEventListener("click", () => {
+    navmenu.classList.toggle("showMenus");
+    console.log("Menu content:", navmenu.innerHTML);
+});
+        document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 1.5) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+
+        function closePage(){
+            window.location='/api';
+        }
+    </script>
+</body>
+</html>

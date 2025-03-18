@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CulturyUS - Transactions</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                        <ul>
+                            <a href="/api"><li>API</li></a>
+                            <a href="/transactions"><li>Transactions</li></a>
+                            <a href="/documentation"><li>Documentation</li></a>
+                        </ul>
+                    </div>
+                </div>
+                <span class="toggle-bar">☰</span>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="transactionsContainer">
+            <p>The EthicalPay Transactions page provides users with a detailed history of all their payments, ensuring transparency and easy financial tracking. Users can view transaction details such as payment status, amount, and payment method. The page is designed for a seamless experience, allowing users to filter transactions based on status (successful, pending, or failed).</p>
+            <h3 id="transBTN">Transactions </h3>
+            <div class="transactionsDIV">
+                {{ if .tdata}}
+                <table>
+                    <tr>
+                        <th>Email</th>
+                        <th>Cost</th>
+                        <th>HTTPMethod</th>
+                        <th>Status</th>
+                    </tr>
+                    {{range .tdata}}
+                    <tr>
+                        <td>{{ .Email}}</td>
+                        <td>{{ .Cost}}</td>
+                        <td>{{ .HTTPMethod}}</td>
+                        <td>{{ .Status}}</td>
+                    </tr>
+                    {{end}}
+                </table>
+                
+                {{ else }}
+                <p>No API Generated!</p>
+                {{ end }}
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
+        </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 1.5) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+
+        document.getElementById('transBTN').onclick=()=>{
+            document.querySelector('.transactionsDIV').style.display="block";
+        }
+        document.getElementById('transBTN').ondblclick=()=>{
+            document.querySelector('.transactionsDIV').style.display="none";
+        }
+        let togglemenu = document.querySelector(".toggle-bar");
+let navmenu = document.querySelector(".navbar .nav-links .links ul");
+
+togglemenu.addEventListener("click", () => {
+    navmenu.classList.toggle("showMenus");
+    console.log("Menu content:", navmenu.innerHTML);
+});
+    </script>
+</body>
+</html>
