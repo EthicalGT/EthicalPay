@@ -443,6 +443,6 @@ func main() {
 		return c.File("static/documentation/EthicalPay Documentation.pdf")
 	})
 	e.Static("/static", "static")
-	fmt.Println("CulturyUs running at http://localhost:2005")
-	e.Logger.Fatal(e.Start(":2005"))
+	fmt.Println("EthicalPay running at http://localhost:8000")
+	e.Logger.Fatal(e.Start(":8000"))
 }
