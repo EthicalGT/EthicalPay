@@ -652,11 +652,11 @@ footer p img{
         flex-direction: column;
     }
     main .accessContainer .signINContainer{
-        width: 60%;
-        margin: 40px 20%;
+        width: 80%;
+        margin: 40px 10%;
     }
     main .accessContainer .signUPContainer{
-        width: 60%;
-        margin: 40px 20%;
+        width: 80%;
+        margin: 40px 10%;
     }
 }
