@@ -14,7 +14,7 @@
             <div class="navbar">
                 <div class="logo">
                     <img src="/static/img/logo.png" alt="logo">
-                    <p class="toggle-bar">Ethical<span>Pay</span></p>
+                    <p>Ethical<span>Pay</span></p>
                 </div>
                 <div class="nav-links">
                     <div class="links">
@@ -24,16 +24,16 @@
                         </ul>
                 </div>
                 </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
                 </div>
             </nav>
     </header>
-    <div class="nav2">
-        <div class="links2">
+    <div class="sidebar" id="sidebar">
         <ul>
+            <li onclick="toggleSidebar()">Close ✖</li>
             <li onclick="showI()">SignIN</li>
             <li onclick="showII()">SignUP</li>
-            </ul>
-    </div>
+        </ul>
     </div>
     <main>
         <div class="accessContainer">
@@ -129,37 +129,9 @@
             document.querySelector('.signINContainer').style.display = 'none';
             document.querySelector('.signUPContainer').style.display = 'block';
         }
-        let togglemenu = document.querySelector(".toggle-bar");
-        togglemenu.style.display="block";
-let navmenu = document.querySelector(".navbar .nav-links .links ul");
-let mediaQuery = window.matchMedia("(min-width: 768px)");
-
-function handleScreenSizeChange(e) {
-    if (e.matches) {
-        console.log("Size is greater than 768 pixels, toggle bar is deactivated");
-        togglemenu.classList.remove("active");
-        document.querySelector(".nav2").style.display="none";
-    } else {
-        togglemenu.addEventListener("click", () => {
-            togglemenu.classList.toggle("active");
-
-            if (togglemenu.classList.contains("active")) {
-                document.querySelector(".nav2").style.display = "flex";
-            } else {
-                document.querySelector(".nav2").style.display = "none";
-            }
-        });
-    }
-}
-handleScreenSizeChange(mediaQuery);
-mediaQuery.addEventListener("change", handleScreenSizeChange);
-document.addEventListener("click", (event) => {
-    if (event.target.matches("li")) {
-        console.log("Clicked:", event.target.textContent);
-        if (event.target.textContent === "SignIN") showI();
-        if (event.target.textContent === "SignUP") showII();
-    }
-});
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("show");
+        }
     </script>
 </body>
 </html>
