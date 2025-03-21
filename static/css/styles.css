@@ -32,8 +32,8 @@ body * {
     align-items: center; 
     padding: 10px 20px; 
     background-color: #fff;
-    height: auto; 
-    position: relative;
+    height: 70px; 
+    border-bottom: 1px solid #e0dcdc;
 }
 
 .navbar .logo {
@@ -42,13 +42,15 @@ body * {
 }
 
 .navbar .logo img{
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
+    margin: 15px 0px;
 }
 .navbar .logo p{
-    padding: 5px 10px;
+    padding: 12px 10px;
     font-size: 25px;
     font-weight: bold;
+    user-select: none;
 }
 .navbar .logo p span{
     color: #00CED1;
@@ -57,30 +59,43 @@ body * {
     list-style-type: none;
     display: flex;
 }
-.nav2{
-    width: 100%;
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    width: 250px;
+    height: 100%;
+    z-index: 1000;
     background-color: #00CED1;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    display: none;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    padding-top: 20px;
+    transition: 0.3s;
 }
-.links2{
-    width: 60%;
-    margin: 5px 20%;
-    text-align: center;
+.sidebar ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    padding-left: 20px;
 }
-.links2 ul li{
-    padding: 5px 0px;
+.sidebar ul li {
     color: #fff;
-    text-decoration: none;
-    list-style-type: none;
-    transition: 0.9s ease-in-out;
-    border-radius: 8px;
+    padding: 10px 0;
     cursor: pointer;
 }
-.links2 ul li:hover{
-    color: #fff;
-    border-bottom: 1px solid #fff;
+.sidebar.show {
+    right: 0;
+}
+.menu-toggle {
+    margin-top: 12px;
+    color: #00CED1;
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    float: right;
+    cursor: pointer;
 }
 .navbar .nav-links .links ul li {
     text-align: center;
@@ -619,32 +634,8 @@ footer p img{
         border-radius: 8px;
         text-align: center;
     }
-    .toggle-bar{
-        display: flex;
-        cursor: pointer;
-        width: 10px;
-    }
-    .showMenus {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        width: 100%;
-        top: 30px;
-        cursor: pointer;
-        text-align: center; 
-        gap: 5px;
-        float: right;
-        height: auto;
-        padding: 0px;  
-        cursor: pointer;
-        z-index: 5;
-    }
-    .navbar .nav-links .links ul.showMenus {
-        display: flex;
-        opacity: 1;
-        width: 100%;
+    .menu-toggle {
+        display: block;
     }
     main .payment-container{
         flex-direction: column;
