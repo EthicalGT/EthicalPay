@@ -588,7 +588,7 @@ main .transactionsContainer .transactionsDIV{
     text-align: center;
 }
 
-.toggle-bar{
+.toggle-bar, .toggle-bar active{
     margin: 10px 10px;
     color: #00CED1;
     font-weight: bolder;
@@ -637,6 +637,28 @@ footer p img{
     .menu-toggle {
         display: block;
     }
+    /*.showMenus {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        justify-content: center;
+        align-content: flex-start;
+        position: static;
+        width: 100px;
+        margin-top: 40px;
+        cursor: pointer;
+        text-align: center; 
+        gap: 5px;
+        background-color: #333;
+        height: auto;
+        padding: 4px 150px;  
+        cursor: pointer;
+    }
+    .navbar .nav-links .links ul.showMenus {
+        display: flex;
+        opacity: 1;
+        width: 100%;
+    }*/
     main .payment-container{
         flex-direction: column;
     }
@@ -665,13 +687,5 @@ footer p img{
     }
     .homeContainer .imgContainer{
         flex-direction: column;
-    }
-    main .accessContainer .signINContainer{
-        width: 60%;
-        margin: 40px 20%;
-    }
-    main .accessContainer .signUPContainer{
-        width: 60%;
-        margin: 40px 20%;
     }
 }
