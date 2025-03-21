@@ -368,8 +368,24 @@ func main() {
 			if err := writeData(transactionFile, trans); err != nil {
 				return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 			}
+			msg := `<html><body><script>
+    alert('Transaction Status: ` + template.JSEscapeString(status) + `'); 
+    setTimeout(() => {  // Add a short delay
+        const form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "` + c.FormValue("url") + `");
 
-			return c.HTML(http.StatusOK, "<script>alert('Transaction Status: "+status+"'); window.location.href='"+c.FormValue("url")+"';</script>")
+        const inputI = document.createElement("input");
+        inputI.type = "hidden";
+        inputI.name = "result";
+        inputI.value = "` + template.JSEscapeString(status) + `"; 
+        form.appendChild(inputI);
+        document.body.appendChild(form);
+        form.submit();
+    }, 500);  // Delay of 500ms
+</script></body></html>`
+
+			return c.HTML(http.StatusOK, msg)
 
 		}
 		return c.HTML(http.StatusBadRequest, "<script>alert('Request Failed.');</script>")

@@ -25,11 +25,18 @@
                         </ul>
                     </div>
                 </div>
-                <span class="toggle-bar">☰</span>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
             </div>
         </nav>
     </header>
-
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <a href="/api"><li>API</li></a>
+            <a href="/transactions"><li>Transactions</li></a>
+            <a href="/documentation"><li>Documentation</li></a>
+            <li onclick="toggleSidebar()" id="closetogglebtn"><img src="/static/img/close.svg"></li>
+        </ul>
+    </div>
     <main>
         <div class="apiContainer">
             <div class="apikeysInfo">
@@ -67,13 +74,6 @@
         </footer>
 
     <script>
-        let togglemenu = document.querySelector(".toggle-bar");
-let navmenu = document.querySelector(".navbar .nav-links .links ul");
-
-togglemenu.addEventListener("click", () => {
-    navmenu.classList.toggle("showMenus");
-    console.log("Menu content:", navmenu.innerHTML);
-});
         document.addEventListener("DOMContentLoaded", () => {
     const fadeElements = document.querySelectorAll("body *");
 
@@ -94,6 +94,9 @@ togglemenu.addEventListener("click", () => {
         function closePage(){
             window.location='/api';
         }
+        function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("show");
+    }
     </script>
 </body>
 </html>
