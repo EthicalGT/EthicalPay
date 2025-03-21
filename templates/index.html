@@ -14,20 +14,27 @@
             <div class="navbar">
                 <div class="logo">
                     <img src="/static/img/logo.png" alt="logo">
-                    <p>Ethical<span>Pay</span></p>
+                    <p class="toggle-bar">Ethical<span>Pay</span></p>
                 </div>
                 <div class="nav-links">
                     <div class="links">
                     <ul>
-                        <li onclick="showI()">Sign In</li>
-                        <li onclick="showII()">Sign Up</li>
+                        <li onclick="showI()">SignIN</li>
+                        <li onclick="showII()">SignUP</li>
                         </ul>
                 </div>
                 </div>
-                <span class="toggle-bar">☰</span>
                 </div>
             </nav>
     </header>
+    <div class="nav2">
+        <div class="links2">
+        <ul>
+            <li onclick="showI()">SignIN</li>
+            <li onclick="showII()">SignUP</li>
+            </ul>
+    </div>
+    </div>
     <main>
         <div class="accessContainer">
         <div class="signINContainer">
@@ -55,7 +62,7 @@
                 </div>
         </main>
         <footer>
-            <p>Crafted with <img src="/static/img/love emoji.svg"> by GT</p>
+            <p>Crafted with <img src="/static/img/love emoji.svg"> with GT</p>
             </footer>
         <script>
             document.addEventListener("DOMContentLoaded", () => {
@@ -123,20 +130,29 @@
             document.querySelector('.signUPContainer').style.display = 'block';
         }
         let togglemenu = document.querySelector(".toggle-bar");
+        togglemenu.style.display="block";
 let navmenu = document.querySelector(".navbar .nav-links .links ul");
+let mediaQuery = window.matchMedia("(min-width: 768px)");
 
-togglemenu.addEventListener("click", () => {
-    navmenu.classList.toggle("showMenus");
+function handleScreenSizeChange(e) {
+    if (e.matches) {
+        console.log("Size is greater than 768 pixels, toggle bar is deactivated");
+        togglemenu.classList.remove("active");
+        document.querySelector(".nav2").style.display="none";
+    } else {
+        togglemenu.addEventListener("click", () => {
+            togglemenu.classList.toggle("active");
 
-    // Log all elements inside .showMenus
-    console.log("Menu content:", navmenu.innerHTML);
-
-    // Log all hyperlinks inside .showMenus
-    let links = navmenu.querySelectorAll("a");
-    console.log("Hyperlinks found:", links);
-
-    links.forEach(link => console.log("Link:", link.href, "Text:", link.textContent));
-});
+            if (togglemenu.classList.contains("active")) {
+                document.querySelector(".nav2").style.display = "flex";
+            } else {
+                document.querySelector(".nav2").style.display = "none";
+            }
+        });
+    }
+}
+handleScreenSizeChange(mediaQuery);
+mediaQuery.addEventListener("change", handleScreenSizeChange);
 document.addEventListener("click", (event) => {
     if (event.target.matches("li")) {
         console.log("Clicked:", event.target.textContent);
@@ -144,9 +160,6 @@ document.addEventListener("click", (event) => {
         if (event.target.textContent === "SignUP") showII();
     }
 });
-
-
-
     </script>
 </body>
 </html>
