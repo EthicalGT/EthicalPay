@@ -57,7 +57,31 @@ body * {
     list-style-type: none;
     display: flex;
 }
-
+.nav2{
+    width: 100%;
+    background-color: #00CED1;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    display: none;
+}
+.links2{
+    width: 60%;
+    margin: 5px 20%;
+    text-align: center;
+}
+.links2 ul li{
+    padding: 5px 0px;
+    color: #fff;
+    text-decoration: none;
+    list-style-type: none;
+    transition: 0.9s ease-in-out;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.links2 ul li:hover{
+    color: #fff;
+    border-bottom: 1px solid #fff;
+}
 .navbar .nav-links .links ul li {
     text-align: center;
     padding: 0 20px;
