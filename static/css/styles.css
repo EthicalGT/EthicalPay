@@ -688,7 +688,11 @@ footer p img{
     .homeContainer .imgContainer{
         flex-direction: column;
     }
-    .signINContainer,signUPContainer{
+    main .accessContainer .signINContainer{
+        width: 80%;
+        margin: 10px 10%;
+    }
+    main .accessContainer .signUPContainer{
         width: 80%;
         margin: 10px 10%;
     }
