@@ -98,6 +98,58 @@ func xorEncryptDecrypt(input, key string) string {
 	return string(output)
 }
 
+func verifyCredentials(c echo.Context) error {
+	const apiFile = "static/db/api.json"
+	var api, key, cost, callbackURL string
+
+	if c.Request().Method == http.MethodGet {
+		api = c.QueryParam("tb1")
+		key = c.QueryParam("tb2")
+		cost = c.QueryParam("tb3")
+		callbackURL = c.QueryParam("tb4")
+	} else if c.Request().Method == http.MethodPost {
+		api = c.FormValue("tb1")
+		key = c.FormValue("tb2")
+		cost = c.FormValue("tb3")
+		callbackURL = c.FormValue("tb4")
+	} else {
+		return c.HTML(http.StatusMethodNotAllowed, "<script>alert('405 Method Not Allowed');</script>")
+	}
+	fmt.Println("\nReceived params:", "API:", api, "Key:", key, "Cost:", cost, "callbackURL:", callbackURL)
+	msg := `<html><body><script>
+alert('Correct credentials!');
+const form = document.createElement("form");
+form.setAttribute("method", "POST");
+form.setAttribute("action", "/paymentpage");
+
+const inputCost = document.createElement("input");
+inputCost.type = "hidden";
+inputCost.name = "cost";
+inputCost.value = "` + template.JSEscapeString(cost) + `"; 
+form.appendChild(inputCost);
+const inputCallback = document.createElement("input");
+inputCallback.type = "hidden";
+inputCallback.name = "callbackurl";
+inputCallback.value = "` + template.JSEscapeString(callbackURL) + `"; 
+form.appendChild(inputCallback);
+document.body.appendChild(form);
+form.submit();
+</script></body></html>`
+
+	apis, err := readData[Api](apiFile)
+	if err != nil {
+		return c.HTML(http.StatusConflict, "<script>alert('Something went wrong!');</script>")
+	}
+
+	for _, myapi := range apis {
+		if myapi.APIId == api && myapi.APIKey == key {
+			return c.HTML(http.StatusAccepted, msg)
+		}
+	}
+
+	return c.HTML(http.StatusUnauthorized, "<script>alert('Invalid API Credentials.'); window.location='/api';</script>")
+}
+
 func main() {
 	//key := "GT'SEra"
 	e := echo.New()
@@ -294,46 +346,8 @@ func main() {
 		})
 	})
 
-	e.GET("/verifycred", func(c echo.Context) error {
-		const apiFile = "static/db/api.json"
-		api := c.QueryParam("tb1")
-		key := c.QueryParam("tb2")
-		cost := c.QueryParam("tb3")
-		callbackURL := c.QueryParam("tb4")
-		fmt.Println("\nReceived params:", "API:", api, "Key:", key, "Cost:", cost, "callbackURL:", callbackURL)
-		msg := `<html><body><script>
-    alert('Correct credentials!');
-    const form = document.createElement("form");
-    form.setAttribute("method", "POST");
-    form.setAttribute("action", "/paymentpage");
-
-    const inputCost = document.createElement("input");
-    inputCost.type = "hidden";
-    inputCost.name = "cost";
-    inputCost.value = "` + template.JSEscapeString(cost) + `"; 
-    form.appendChild(inputCost);
-    const inputCallback = document.createElement("input");
-    inputCallback.type = "hidden";
-    inputCallback.name = "callbackurl";
-    inputCallback.value = "` + template.JSEscapeString(callbackURL) + `"; 
-    form.appendChild(inputCallback);
-    document.body.appendChild(form);
-    form.submit();
-</script></body></html>`
-
-		apis, err := readData[Api](apiFile)
-		if err != nil {
-			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong!');</script>")
-		}
-
-		for _, myapi := range apis {
-			if myapi.APIId == api && myapi.APIKey == key {
-				return c.HTML(http.StatusAccepted, msg)
-			}
-		}
-
-		return c.HTML(http.StatusUnauthorized, "<script>alert('Invalid API Credentials.'); window.location='/api';</script>")
-	})
+	e.POST("/verifycred", verifyCredentials)
+	e.GET("/verifycred", verifyCredentials)
 
 	e.POST("/paymentres", func(c echo.Context) error {
 		if c.FormValue("upibtn") != "" || c.FormValue("dcbtn") != "" {
@@ -370,11 +384,9 @@ func main() {
 			}
 			msg := `<html><body><script>
     alert('Transaction Status: ` + template.JSEscapeString(status) + `'); 
-    setTimeout(() => {  // Add a short delay
         const form = document.createElement("form");
         form.setAttribute("method", "POST");
         form.setAttribute("action", "` + c.FormValue("url") + `");
-
         const inputI = document.createElement("input");
         inputI.type = "hidden";
         inputI.name = "result";
@@ -382,7 +394,6 @@ func main() {
         form.appendChild(inputI);
         document.body.appendChild(form);
         form.submit();
-    }, 500);  // Delay of 500ms
 </script></body></html>`
 
 			return c.HTML(http.StatusOK, msg)
@@ -422,9 +433,22 @@ func main() {
 		trans = append(trans, data)
 
 		if err := writeData(transactionFile, trans); err != nil {
-			return c.HTML(http.StatusInternalServerError, "<script>alert('Transaction recorded failed. Please try again.'); window.location='/api';</script>")
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Transaction failed. Please try again.'); window.location='/api';</script>")
 		}
-		return c.HTML(http.StatusOK, "<script>alert('Transaction Status: "+status+"'); window.location.href='"+c.FormValue("myurl")+"';</script>")
+		msg := `<html><body><script>
+    alert('Transaction Status: ` + template.JSEscapeString(status) + `'); 
+        const form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "` + c.FormValue("url") + `");
+        const inputI = document.createElement("input");
+        inputI.type = "hidden";
+        inputI.name = "result";
+        inputI.value = "` + template.JSEscapeString(status) + `"; 
+        form.appendChild(inputI);
+        document.body.appendChild(form);
+        form.submit();
+</script></body></html>`
+		return c.HTML(http.StatusOK, msg)
 	})
 	e.GET("/transactions", func(c echo.Context) error {
 		const transactionFile = "static/db/transactions.json"
