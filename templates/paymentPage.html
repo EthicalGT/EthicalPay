@@ -47,7 +47,8 @@
                         <span id="error-message" style="color: red; display: none;">Invalid UPI ID</span>
                         <br>
                         <input type="hidden" name="cost" value={{.cost}}>
-                        <input type="hidden" name="url" value={{.callbackurl}}>                       
+                        <input type="hidden" name="url" value={{.callbackurl}}> 
+                        <input type="hidden" name="httpmethod" value={{.httpmethod}}>                      
                         <input type="submit" name="upibtn" value="Proceed">
                         <input type="reset" value="Cancel">
                     </form>
@@ -64,7 +65,8 @@
                         <label for="tb3">Expiry Date:</label><br>
                         <input type="month" name="tb3">
                         <input type="hidden" name="cost" value={{.cost}}>
-                        <input type="hidden" name="url" value={{.callbackurl}}>    
+                        <input type="hidden" name="url" value={{.callbackurl}}>
+                        <input type="hidden" name="httpmethod" value={{.httpmethod}}>     
                         <input type="submit" name="dcbtn" value="Validate">
                     </form> 
                 </div>
@@ -119,39 +121,33 @@
             document.getElementById('QRDiv').style.display='none';
             document.getElementById('debitcreditDiv').style.display='none';
         }
-        function QRFunc(){
-            document.getElementById('UPIDiv').style.display='none';
-            document.getElementById('QRDiv').style.display='block';
-            document.getElementById('debitcreditDiv').style.display='none';
-            const countdownElement = document.getElementById('para');
+        let countdownTimeouts = [];
+function QRFunc() {
+    document.getElementById('UPIDiv').style.display = 'none';
+    document.getElementById('QRDiv').style.display = 'block';
+    document.getElementById('debitcreditDiv').style.display = 'none';
 
-            for (let i = 60; i >= 0; i--) {
-                setTimeout(() => {
-                    countdownElement.innerText = `Do Payment within ${i} seconds...`;
-                    if (i === 0) {
-                    sendQRPaymentRequest();
-                }
-            }, (60 - i) * 1000); 
-        }
+    const countdownElement = document.getElementById('para');
+    let timeLeft = 10;
+    countdownTimeouts.forEach(timeout => clearTimeout(timeout));
+    countdownTimeouts = [];
 
-        } 
-        function sendQRPaymentRequest() {
-			const form = document.createElement("form");
-			form.setAttribute("method", "POST");
-			form.setAttribute("action", "/QRpaymentres");
-            const inputCost = document.createElement("input");
-            inputCost.type = "hidden";
-            inputCost.name = "cost";
-            inputCost.value = "{{.cost}}"; 
-            form.appendChild(inputCost);
-            const inputCallback = document.createElement("input");
-            inputCallback.type = "hidden";
-            inputCallback.name = "myurl";
-            inputCallback.value = "{{.callbackurl}}"; 
-            form.appendChild(inputCallback);
-			document.body.appendChild(form);
-			form.submit();
+    for (let i = 10; i >= 0; i--) {
+        let timeout = setTimeout(() => {
+            countdownElement.innerHTML = "Your time left: " + i;
+
+            if (i === 0) {
+                console.log("Limit reached.");
+                window.location="/QRpaymentres";
+            }
+        }, (10 - i) * 1000);
+
+        countdownTimeouts.push(timeout);
+    }
 }
+
+
+
         function DCFunc(){
             document.getElementById('UPIDiv').style.display='none';
             document.getElementById('QRDiv').style.display='none';

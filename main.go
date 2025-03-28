@@ -30,10 +30,12 @@ type User struct {
 	Password string `json:"password"`
 }
 type Transactions struct {
-	Email      string `json:"email"`
-	Cost       string `json:"cost"`
-	HTTPMethod string `json:"httpmethod"`
-	Status     string `json:"status"`
+	Email       string `json:"email"`
+	Cost        string `json:"cost"`
+	HTTPMethod  string `json:"httpmethod"`
+	Status      string `json:"status"`
+	DateTime    string `json:"datetime"`
+	PaymentMode string `json:"paymentmode"`
 }
 
 type Api struct {
@@ -132,6 +134,11 @@ inputCallback.type = "hidden";
 inputCallback.name = "callbackurl";
 inputCallback.value = "` + template.JSEscapeString(callbackURL) + `"; 
 form.appendChild(inputCallback);
+const inputMethod = document.createElement("input");
+inputMethod.type = "hidden";
+inputMethod.name = "httpmethod";
+inputMethod.value = "` + template.JSEscapeString(c.Request().Method) + `"; 
+form.appendChild(inputMethod);
 document.body.appendChild(form);
 form.submit();
 </script></body></html>`
@@ -338,11 +345,31 @@ func main() {
 
 	e.POST("/paymentpage", func(c echo.Context) error {
 		cost := c.FormValue("cost")
+		method := c.FormValue("httpmethod")
 		callbackURL := c.FormValue("callbackurl")
+		ck1 := new(http.Cookie)
+		ck1.Name = "cost"
+		ck1.Value = cost
+		ck1.Expires = time.Now().Add(12 * time.Hour)
+		ck1.HttpOnly = true
+		c.SetCookie(ck1)
+		ck2 := new(http.Cookie)
+		ck2.Name = "method"
+		ck2.Value = method
+		ck2.Expires = time.Now().Add(12 * time.Hour)
+		ck2.HttpOnly = true
+		c.SetCookie(ck2)
+		ck3 := new(http.Cookie)
+		ck3.Name = "callback"
+		ck3.Value = callbackURL
+		ck3.Expires = time.Now().Add(12 * time.Hour)
+		ck3.HttpOnly = true
+		c.SetCookie(ck3)
 		fmt.Println("\nCost: "+cost+"\nCallback URL: ", callbackURL)
 		return c.Render(http.StatusOK, "paymentPage.html", map[string]string{
 			"cost":        cost,
 			"callbackurl": callbackURL,
+			"httpmethod":  method,
 		})
 	})
 
@@ -371,12 +398,19 @@ func main() {
 				return c.HTML(http.StatusBadRequest, "<script>alert('Invalid session data!'); window.location='/';</script>")
 			}
 			email := string(decoded)
-
+			mode := ""
+			if c.FormValue("upibtn") != "" {
+				mode = "UPI"
+			} else {
+				mode = "Debit/Credit Card"
+			}
 			data := Transactions{
-				Email:      email,
-				Cost:       c.FormValue("cost"),
-				HTTPMethod: c.Request().Method,
-				Status:     status,
+				Email:       email,
+				Cost:        c.FormValue("cost"),
+				HTTPMethod:  c.FormValue("httpmethod"),
+				Status:      status,
+				DateTime:    time.Now().String(),
+				PaymentMode: mode,
 			}
 			trans = append(trans, data)
 			if err := writeData(transactionFile, trans); err != nil {
@@ -391,7 +425,19 @@ func main() {
         inputI.type = "hidden";
         inputI.name = "result";
         inputI.value = "` + template.JSEscapeString(status) + `"; 
-        form.appendChild(inputI);
+        
+		const inputII = document.createElement("input");
+        inputII.type = "hidden";
+        inputII.name = "paymode";
+        inputII.value = "` + template.JSEscapeString(mode) + `"; 
+        
+		const inputIII = document.createElement("input");
+        inputIII.type = "hidden";
+        inputIII.name = "datetime";
+        inputIII.value = "` + template.JSEscapeString(time.Now().String()) + `";
+		form.appendChild(inputI); 
+		form.appendChild(inputII);
+        form.appendChild(inputIII);
         document.body.appendChild(form);
         form.submit();
 </script></body></html>`
@@ -402,32 +448,47 @@ func main() {
 		return c.HTML(http.StatusBadRequest, "<script>alert('Request Failed.');</script>")
 	})
 
-	e.POST("/QRpaymentres", func(c echo.Context) error {
+	e.GET("/QRpaymentres", func(c echo.Context) error {
 		status := generateRandomStatus()
 		fmt.Println("\nurl:", c.FormValue("myurl"))
+
 		const transactionFile = "static/db/transactions.json"
 		trans, err := readData[Transactions](transactionFile)
 		if err != nil {
-			return c.HTML(http.StatusInternalServerError, "<script>alert('Error reading transaction data. Please try again later.'); window.location='/api';</script>")
+			fmt.Println("\nError reading transaction data.")
 		}
 
-		cookie, err2 := c.Cookie("email")
-		if err2 != nil {
+		methodCookie, err := c.Cookie("method")
+		if err != nil {
+			return c.HTML(http.StatusBadRequest, "<script>alert('Missing method cookie.'); window.location='/';</script>")
+		}
+		costCookie, err := c.Cookie("cost")
+		if err != nil {
+			return c.HTML(http.StatusBadRequest, "<script>alert('Missing cost cookie.'); window.location='/';</script>")
+		}
+		callbackCookie, err := c.Cookie("callback")
+		if err != nil {
+			return c.HTML(http.StatusBadRequest, "<script>alert('Missing callback cookie.'); window.location='/';</script>")
+		}
+		emailCookie, err := c.Cookie("email")
+		if err != nil {
 			return c.HTML(http.StatusUnauthorized, "<script>alert('Session expired. Please log in again.'); window.location='/';</script>")
 		}
 
-		decoded, err3 := base64.StdEncoding.DecodeString(cookie.Value)
-		if err3 != nil {
+		decodedEmail, err := base64.StdEncoding.DecodeString(emailCookie.Value)
+		if err != nil {
 			return c.HTML(http.StatusBadRequest, "<script>alert('Invalid session detected. Please log in again.'); window.location='/';</script>")
 		}
 
-		email := string(decoded)
+		email := string(decodedEmail)
 
 		data := Transactions{
-			Email:      email,
-			Cost:       c.FormValue("cost"),
-			HTTPMethod: c.Request().Method,
-			Status:     status,
+			Email:       email,
+			Cost:        costCookie.Value,
+			HTTPMethod:  methodCookie.Value,
+			Status:      status,
+			DateTime:    time.Now().Format(time.RFC3339),
+			PaymentMode: "QRPay",
 		}
 
 		trans = append(trans, data)
@@ -435,21 +496,50 @@ func main() {
 		if err := writeData(transactionFile, trans); err != nil {
 			return c.HTML(http.StatusInternalServerError, "<script>alert('Transaction failed. Please try again.'); window.location='/api';</script>")
 		}
-		msg := `<html><body><script>
-    alert('Transaction Status: ` + template.JSEscapeString(status) + `'); 
-        const form = document.createElement("form");
-        form.setAttribute("method", "POST");
-        form.setAttribute("action", "` + c.FormValue("url") + `");
-        const inputI = document.createElement("input");
-        inputI.type = "hidden";
-        inputI.name = "result";
-        inputI.value = "` + template.JSEscapeString(status) + `"; 
-        form.appendChild(inputI);
-        document.body.appendChild(form);
-        form.submit();
-</script></body></html>`
+
+		callbackURL := callbackCookie.Value
+		if !strings.HasPrefix(callbackURL, "http") {
+			return c.HTML(http.StatusBadRequest, "<script>alert('Invalid callback URL.'); window.location='/';</script>")
+		}
+
+		paymode := "QRPay"
+		msg := fmt.Sprintf(`<html><body><script>
+		alert('Transaction Status: %s'); 
+		const form = document.createElement("form");
+		form.method = "POST";
+		form.action = "%s";
+	
+		const inputI = document.createElement("input");
+		inputI.type = "hidden";
+		inputI.name = "result";
+		inputI.value = "%s"; 
+		form.appendChild(inputI);
+	
+		const inputII = document.createElement("input");
+		inputII.type = "hidden";
+		inputII.name = "paymode";
+		inputII.value = "%s"; 
+		form.appendChild(inputII);
+	
+		const inputIII = document.createElement("input");
+		inputIII.type = "hidden";
+		inputIII.name = "datetime";
+		inputIII.value = "%s";
+		form.appendChild(inputIII);
+	
+		document.body.appendChild(form);
+		form.submit();
+	</script></body></html>`,
+			template.JSEscapeString(status),
+			template.JSEscapeString(callbackURL),
+			template.JSEscapeString(status),
+			template.JSEscapeString(paymode),
+			template.JSEscapeString(time.Now().Format(time.RFC3339)),
+		)
+
 		return c.HTML(http.StatusOK, msg)
 	})
+
 	e.GET("/transactions", func(c echo.Context) error {
 		const transactionFile = "static/db/transactions.json"
 		trans, err := readData[Transactions](transactionFile)

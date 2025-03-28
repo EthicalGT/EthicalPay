@@ -1,134 +1,26 @@
 [
   {
     "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "500",
-    "httpmethod": "POST",
-    "status": "failed"
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-28T09:59:50+05:30",
+    "paymentmode": "QRPay"
   },
   {
     "email": "ganeshtelore4@gmail.com",
     "cost": "100",
-    "httpmethod": "POST",
-    "status": "success"
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-28 10:00:53.146535394 +0530 IST m=+30.808500910",
+    "paymentmode": "UPI"
   },
   {
     "email": "ganeshtelore4@gmail.com",
     "cost": "100",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "100",
-    "httpmethod": "POST",
-    "status": "failed"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "100",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "100",
-    "httpmethod": "POST",
-    "status": "success"
-  },
-  {
-    "email": "ganeshtelore4@gmail.com",
-    "cost": "100",
-    "httpmethod": "POST",
-    "status": "success"
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-28 10:07:42.49010643 +0530 IST m=+45.504802032",
+    "paymentmode": "Debit/Credit Card"
   }
 ]
