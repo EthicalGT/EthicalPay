@@ -22,5 +22,53 @@
     "status": "success",
     "datetime": "2025-03-28 10:07:42.49010643 +0530 IST m=+45.504802032",
     "paymentmode": "Debit/Credit Card"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-29 13:06:19.468930953 +0530 IST m=+25.702668174",
+    "paymentmode": "UPI"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-29 13:09:38.51736959 +0530 IST m=+29.391268889",
+    "paymentmode": "Debit/Credit Card"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "failed",
+    "datetime": "2025-03-29 13:14:37.534726298 +0530 IST m=+15.092280498",
+    "paymentmode": "Debit/Credit Card"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "failed",
+    "datetime": "2025-03-29 13:15:54.47755824 +0530 IST m=+17.190673092",
+    "paymentmode": "Debit/Credit Card"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "failed",
+    "datetime": "2025-03-29 13:23:50.034707618 +0530 IST m=+15.512807208",
+    "paymentmode": "Debit/Credit Card"
+  },
+  {
+    "email": "ganeshtelore4@gmail.com",
+    "cost": "100",
+    "httpmethod": "GET",
+    "status": "success",
+    "datetime": "2025-03-29 13:29:41.309395324 +0530 IST m=+17.892937247",
+    "paymentmode": "UPI"
   }
 ]

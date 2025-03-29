@@ -232,6 +232,9 @@ func main() {
 	})
 
 	e.POST("/home", func(c echo.Context) error {
+		if c.Request().Method == "POST" || c.Request().Method == "GET" {
+			fmt.Println("\nFormValues: " + c.FormValue("cost") + c.FormValue("httpmethod") + c.FormValue("datetime") + c.FormValue("result") + c.FormValue("paymode"))
+		}
 		return c.Render(http.StatusAccepted, "home.html", nil)
 	})
 
@@ -435,9 +438,23 @@ func main() {
         inputIII.type = "hidden";
         inputIII.name = "datetime";
         inputIII.value = "` + template.JSEscapeString(time.Now().String()) + `";
+
+		const inputIV = document.createElement("input");
+        inputIV.type = "hidden";
+        inputIV.name = "cost";
+        inputIV.value = "` + template.JSEscapeString(c.FormValue("cost")) + `";
+		
+		const inputV = document.createElement("input");
+        inputV.type = "hidden";
+        inputV.name = "httpmethod";
+        inputV.value = "` + template.JSEscapeString(c.FormValue("httpmethod")) + `";
+
 		form.appendChild(inputI); 
 		form.appendChild(inputII);
         form.appendChild(inputIII);
+		form.appendChild(inputIV);
+		form.appendChild(inputV);
+		
         document.body.appendChild(form);
         form.submit();
 </script></body></html>`
@@ -526,16 +543,29 @@ func main() {
 		inputIII.name = "datetime";
 		inputIII.value = "%s";
 		form.appendChild(inputIII);
-	
+		
+		const inputIV = document.createElement("input");
+		inputIV.type = "hidden";
+		inputIV.name = "httpmethod";
+		inputIV.value = "%s";
+		form.appendChild(inputIV);
+
+		const inputV = document.createElement("input");
+		inputV.type = "hidden";
+		inputV.name = "cost";
+		inputV.value = "%s";
+		form.appendChild(inputV); 
+
 		document.body.appendChild(form);
 		form.submit();
 	</script></body></html>`,
 			template.JSEscapeString(status),
-			template.JSEscapeString(callbackURL),
+			template.JSEscapeString(callbackCookie.Value),
 			template.JSEscapeString(status),
 			template.JSEscapeString(paymode),
 			template.JSEscapeString(time.Now().Format(time.RFC3339)),
-		)
+			template.JSEscapeString(methodCookie.Value),
+			template.JSEscapeString(costCookie.Value))
 
 		return c.HTML(http.StatusOK, msg)
 	})

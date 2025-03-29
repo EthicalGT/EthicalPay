@@ -78,16 +78,10 @@ let navmenu = document.querySelector(".navbar .nav-links .links ul");
 
 togglemenu.addEventListener("click", () => {
     navmenu.classList.toggle("showMenus");
-    console.log("Menu content:", navmenu.innerHTML);
 });
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("show");
 }
-document.querySelector("form").addEventListener("submit", (event) => {
-    event.preventDefault(); 
-    const formData = new FormData(event.target);
-    console.log(formData.get("result"));
-});
         </script>
 </body>
 </html>
