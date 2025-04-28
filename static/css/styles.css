@@ -327,6 +327,27 @@ main .accessContainer .signUPContainer{
     border-radius: 8px;
     display: none;
 }
+main .accessContainer .OTPValidationContainer{
+    width: 30%;
+    margin: 10px 35%;
+    border: 1px solid #00CED1;
+    border-radius: 8px;
+}
+.OTPValidationContainer h2 {
+    text-align: center;
+    padding: 10px 0px;
+}
+.OTPValidationContainer input[type="text"]{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    color: #00CED1;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    outline: none;
+    padding: 0px 5px;
+    font-size: 16px;
+}
 main .accessContainer .signINContainer input[type="email"], input[type="password"]{
     width: 80%;
     margin: 10px 10%;
@@ -365,6 +386,20 @@ main .accessContainer .signUPContainer input[type="text"],input[type="email"], i
     padding: 0px 5px;
     font-size: 16px;
 }
+.OTPValidationContainer input[type="submit"] {
+    width: 80%;
+    margin: 20px 10%;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #00CED1;
+    background-color: #34e9ec;
+    outline: none;
+    padding: 0px 5px;
+    transition: 1s ease-in-out;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
 main .accessContainer .signUPContainer input[type="submit"]{
     width: 80%;
     margin: 20px 10%;
@@ -384,6 +419,18 @@ main .accessContainer .signINContainer input[type="submit"]:hover{
 }
 main .accessContainer .signUPContainer input[type="submit"]:hover{
     background-color: #00CED1;
+}
+.OTPValidationContainer input[type="submit"]:hover {
+    background-color: #00CED1;
+}
+.OTPValidationContainer label{
+    width: 80%;
+    margin: 10px 10%;
+    height: 40px;
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0px 5px;
 }
 main .accessContainer .signINContainer label{
     width: 80%;

@@ -1,12 +1,7 @@
 [
   {
-    "name": "Ganesh Telore",
+    "name": "Ganesh Bhaskar Telore",
     "email": "ganeshtelore4@gmail.com",
-    "password": "Ganesh@2004"
-  },
-  {
-    "name": "Nikhil Shivankar",
-    "email": "nikhilshivankar81@gmail.com",
-    "password": "Nikhil@02"
+    "password": "$2a$10$e9Xq.JQbjKdXLDmFpbgh0u6HefH5daQibIPuWP/vUOw7Ub7lt1SJC"
   }
 ]

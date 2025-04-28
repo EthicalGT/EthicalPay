@@ -6,14 +6,18 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/gomail.v2"
 )
 
 type Template struct {
@@ -45,6 +49,12 @@ type Api struct {
 	APIId      string `json:"apiid"`
 	APIKey     string `json:"apikey"`
 	CreatedOn  string `json:"createdon"`
+}
+
+type OTP struct {
+	Email     string `json:"email"`
+	Otp       int64  `json:otp`
+	CreatedOn string `json:"createdon"`
 }
 
 func readData[T any](filePath string) ([]T, error) {
@@ -89,15 +99,14 @@ func generateRandomStatus() string {
 	return "success"
 }
 
-func xorEncryptDecrypt(input, key string) string {
-	output := make([]byte, len(input))
-	keyLen := len(key)
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
 
-	for i := range input {
-		output[i] = input[i] ^ key[i%keyLen]
-	}
-
-	return string(output)
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 func verifyCredentials(c echo.Context) error {
@@ -157,6 +166,21 @@ form.submit();
 	return c.HTML(http.StatusUnauthorized, "<script>alert('Invalid API Credentials.'); window.location='/api';</script>")
 }
 
+func sendEmailHandler(c echo.Context, otp int64, to string, subject string, body string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", "mypyschbuddy@gmail.com")
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	myotp := fmt.Sprintf("%v", otp)
+	m.SetBody("text/plain", body+myotp)
+	d := gomail.NewDialer("smtp.gmail.com", 587, "mypyschbuddy@gmail.com", "aoclddetchfgkscg")
+	if err := d.DialAndSend(m); err != nil {
+		return c.HTML(http.StatusInternalServerError, "<script>alert('Could not send email right now! Please try after some time.'); window.location='/';</script>")
+	} else {
+		return c.HTML(http.StatusAccepted, "<script>alert('Email sent successfully!');</script>")
+	}
+}
+
 func main() {
 	//key := "GT'SEra"
 	e := echo.New()
@@ -169,66 +193,193 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "index.html", nil)
 	})
+	e.POST("/otpVerify", func(c echo.Context) error {
+		rand.Seed(time.Now().UnixNano())
+		otp := rand.Intn(900000) + 100000
+
+		email := c.FormValue("tb2")
+
+		const userFile = "static/db/users.json"
+		users, err := readData[User](userFile)
+
+		if err != nil {
+			fmt.Println("No users found in the file or error reading file, proceeding with OTP generation.")
+		} else {
+			for _, user := range users {
+				if user.Email == email {
+					return c.HTML(http.StatusConflict, "<script>alert('Email already registered! Please try to login.'); window.location='/';</script>")
+				}
+			}
+		}
+
+		if err := sendEmailHandler(c, int64(otp), email, "EthicalPay - OTP Code for Verification", "Greetings, Your One-Time Password (OTP) for verification is: "); err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to send OTP email!'); window.location='/';</script>")
+		}
+
+		pwd, err := HashPassword(c.FormValue("tb3"))
+		if err != nil {
+			log.Println("Error encrypting password:", err)
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Internal Error!'); window.location='/';</script>")
+		}
+
+		const OTPFile = "static/db/otp.json"
+		otps, err := readData[OTP](OTPFile)
+
+		if err != nil {
+			otps = []OTP{}
+			fmt.Println("OTP file is empty or error reading OTP data.")
+		}
+
+		newOTP := OTP{
+			Email:     email,
+			Otp:       int64(otp),
+			CreatedOn: time.Now().String(),
+		}
+
+		otps = append(otps, newOTP)
+
+		if err := writeData(OTPFile, otps); err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to update OTP DB!'); window.location='/';</script>")
+		}
+		fmt.Println("DB updated with OTP.")
+
+		msg := `<html><body><script>
+		alert('OTP Sent to your email. Kindly verify to continue.');
+		const form = document.createElement("form");
+		form.setAttribute("method", "POST");
+		form.setAttribute("action", "/otp");
+		
+		const fullname = document.createElement("input");
+		fullname.type = "hidden";
+		fullname.name = "tb1";
+		fullname.value = "` + template.JSEscapeString(c.FormValue("tb1")) + `"; 
+		form.appendChild(fullname);
+		
+		const emailInput = document.createElement("input");
+		emailInput.type = "hidden";
+		emailInput.name = "tb2";
+		emailInput.value = "` + template.JSEscapeString(c.FormValue("tb2")) + `"; 
+		form.appendChild(emailInput);
+		
+		const password = document.createElement("input");
+		password.type = "hidden";
+		password.name = "tb3";
+		password.value = "` + template.JSEscapeString(pwd) + `"; 
+		form.appendChild(password);
+		
+		document.body.appendChild(form);
+		form.submit();
+		</script></body></html>`
+
+		return c.HTML(http.StatusOK, msg)
+	})
+
+	e.POST("/otp", func(c echo.Context) error {
+		fmt.Println("\n" + c.FormValue("tb1") + " " + c.FormValue("tb2") + " " + c.FormValue("tb3"))
+		return c.Render(http.StatusOK, "otp.html", map[string]interface{}{
+			"name":  c.FormValue("tb1"),
+			"email": c.FormValue("tb2"),
+			"pwd":   c.FormValue("tb3"),
+		})
+	})
 
 	e.POST("/userRegistration", func(c echo.Context) error {
 		const userFile = "static/db/users.json"
+		const otpFile = "static/db/otp.json"
+
+		email := c.FormValue("tb2")
+		enteredOtp := c.FormValue("tb")
+
+		otps, err := readData[OTP](otpFile)
+		if err != nil {
+			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong reading OTPs!'); window.location='/';</script>")
+		}
+
+		otpMatched := false
+		for _, otpRecord := range otps {
+			if otpRecord.Email == email && strconv.FormatInt(otpRecord.Otp, 10) == enteredOtp {
+				otpMatched = true
+				break
+			}
+		}
+
+		if !otpMatched {
+			return c.HTML(http.StatusConflict, "<script>alert('OTP verification failed! Please try again.'); window.location='/';</script>")
+		}
+
 		newUser := User{
 			Name:     c.FormValue("tb1"),
-			Email:    c.FormValue("tb2"),
+			Email:    email,
 			Password: c.FormValue("tb3"),
 		}
+
 		users, err := readData[User](userFile)
 		if err != nil {
-			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong!'); window.location='/';</script>")
+			fmt.Println("Something went wrong reading users, Maybe there is no user registered yet!")
 		}
+
 		for _, user := range users {
 			if user.Email == newUser.Email {
 				return c.HTML(http.StatusConflict, "<script>alert('Email already registered!'); window.location='/';</script>")
 			}
 		}
+
 		users = append(users, newUser)
 		if err := writeData(userFile, users); err != nil {
-			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong!'); window.location='/';</script>")
+			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong while registering!'); window.location='/';</script>")
 		}
-		return c.HTML(http.StatusOK, "<script>alert('Registered Successfully.'); window.location='/';</script>")
+
+		return c.HTML(http.StatusOK, "<script>alert('Registered Successfully. Kindly Login.'); window.location='/';</script>")
 	})
 
 	e.POST("/userLogin", func(c echo.Context) error {
 		const userFile = "static/db/users.json"
 		email := c.FormValue("tb1")
 		password := c.FormValue("tb2")
+
 		users, err := readData[User](userFile)
 		if err != nil {
-			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong!'); window.location='/';</script>")
+			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong! Please try to sign up first.'); window.location='/';</script>")
 		}
+
+		var newpwd string
 		for _, user := range users {
-			if user.Email == email && user.Password == password {
-				encoded := base64.StdEncoding.EncodeToString([]byte(email))
-				cookie := new(http.Cookie)
-				cookie.Name = "email"
-				cookie.Value = encoded
-				cookie.Expires = time.Now().Add(12 * time.Hour)
-				cookie.HttpOnly = true
-				c.SetCookie(cookie)
-				fmt.Println("Encrypted:", encoded)
-				if err != nil {
-					return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to generate token"})
-				}
-				msg := `<html><body>
-				<script>
-					const form = document.createElement("form");
-					form.setAttribute("method", "POST");
-					form.setAttribute("action", "/home");
-		
-					document.body.appendChild(form);
-					form.submit(); 
-				</script>
-				</body></html>`
-				return c.HTML(http.StatusAccepted, msg)
+			if user.Email == email {
+				newpwd = user.Password
+				break
 			}
 		}
 
-		return c.HTML(http.StatusAccepted, "<script>alert('Invalid username or password!'); window.location='/';</script>")
+		if newpwd == "" {
+			return c.HTML(http.StatusConflict, "<script>alert('Invalid username or password!'); window.location='/';</script>")
+		}
+
+		mypwd := CheckPasswordHash(password, newpwd)
+		if !mypwd {
+			return c.HTML(http.StatusConflict, "<script>alert('Invalid username or password!'); window.location='/';</script>")
+		}
+		encoded := base64.StdEncoding.EncodeToString([]byte(email))
+		cookie := new(http.Cookie)
+		cookie.Name = "email"
+		cookie.Value = encoded
+		cookie.Expires = time.Now().Add(1 * time.Hour)
+		cookie.HttpOnly = true
+		c.SetCookie(cookie)
+
+		fmt.Println("Encrypted:", encoded)
+
+		msg := `<html><body>
+		<script>
+			const form = document.createElement("form");
+			form.setAttribute("method", "POST");
+			form.setAttribute("action", "/home");
+		
+			document.body.appendChild(form);
+			form.submit(); 
+		</script>
+		</body></html>`
+
+		return c.HTML(http.StatusAccepted, msg)
 	})
 
 	e.POST("/home", func(c echo.Context) error {
@@ -267,7 +418,7 @@ func main() {
 		apis, err := readData[Api](apiFile)
 		if err != nil {
 			fmt.Println("Error reading API data:", err)
-			return c.HTML(http.StatusInternalServerError, "<script>alert('Error loading API data!'); window.location='/api';</script>")
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Error loading API data! Please create an API first.'); window.location='/api';</script>")
 		}
 		fmt.Printf("APIs Data: %+v\n", apis)
 		var filteredAPIs []Api
@@ -574,7 +725,7 @@ func main() {
 		const transactionFile = "static/db/transactions.json"
 		trans, err := readData[Transactions](transactionFile)
 		if err != nil {
-			return c.HTML(http.StatusInternalServerError, "<script>alert('Error reading transaction data. Please try again later.'); window.location='/api';</script>")
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Error reading transaction data. No Transaction performed yet!'); window.location='/api';</script>")
 		}
 
 		cookie, err2 := c.Cookie("email")

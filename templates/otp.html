@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EthicalPay</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+    <link rel="icon" href="/static/img/logo.png">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="/static/img/logo.png" alt="logo">
+                    <p>Ethical<span>Pay</span></p>
+                </div>
+                <div class="nav-links">
+                    <div class="links">
+                    <ul>
+                        <li onclick="showI()">Sign in</li>
+                        <li onclick="showII()">Sign up</li>
+                        </ul>
+                </div>
+                </div>
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                </div>
+            </nav>
+    </header>
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li onclick="showI()">Sign in</li>
+            <li onclick="showII()">Sign up</li>
+            <li onclick="toggleSidebar()" id="closetogglebtn"><img src="/static/img/close.svg"></li>
+        </ul>
+    </div>
+    <main>
+        <div class="accessContainer">
+            {{if .email}}
+                <div class="OTPValidationContainer">
+                    <h2>EthicalPay - OTP Validation</h2>
+                <form action="/userRegistration" method="POST" name="OTPValidationForm" onsubmit="return validateIII()">
+                    <label for="tb">OTP: </label><br>
+                    <input type="text" name="tb" maxlength="6" required><br>
+                    <input type="hidden" name="tb1" value={{.name}}>
+                    <input type="hidden" name="tb2" value={{.email}}>
+                    <input type="hidden" name="tb3" value={{.pwd}}>
+                    <input type="submit" name="submit" value="Register">
+                    </form>
+                    </div>
+                {{else}}
+                <p>Something went wrong. Please try again after some time.</p>
+                {{end}}
+                </div>
+        </main>
+        <footer>
+            <p>Crafted with <img src="/static/img/love emoji.svg"> by GT</p>
+            </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+    const fadeElements = document.querySelectorAll("body *");
+
+    const fadeInOnScroll = () => {
+        fadeElements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            if (rect.top < window.innerHeight * 2.0) {
+                element.style.opacity = 1;
+                element.style.transform = "translateY(0)";
+            }
+        });
+    };
+
+    window.addEventListener("scroll", fadeInOnScroll);
+    fadeInOnScroll(); 
+});
+        function validateIII(){
+            const otpPatt = /^[0-9]{6}$/;
+            if(!otpPatt.test(document.forms['OTPValidationForm']['tb'].value.trim())){
+                alert('OTP should be 6 digit long.');
+                return false;
+            } 
+            return true;
+        }
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("show");
+        }
+    </script>
+</body>
+</html>
