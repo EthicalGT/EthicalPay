@@ -10,12 +10,11 @@ import (
 )
 
 const (
-	githubUsername = "your_github_username"
-	repoName       = "ethicalpay"
-	branch         = "main" // or "master"
+	githubUsername = "EthicalGT"
+	repoName       = "EthicalPay"
+	branch         = "main"
 )
 
-// Fetch the SHA of a given file
 func getSHAOfFile(filePath string) (string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s",
 		githubUsername, repoName, filePath, branch)
@@ -25,11 +24,18 @@ func getSHAOfFile(filePath string) (string, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("HTTP request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		// Try to read the error response body from GitHub
+		var errorBody bytes.Buffer
+		_, _ = errorBody.ReadFrom(resp.Body)
+
+		fmt.Printf("🔍 GitHub GET Error for file: %s\nStatus Code: %d\nResponse: %s\n",
+			filePath, resp.StatusCode, errorBody.String())
+
 		return "", fmt.Errorf("failed to fetch SHA for %s, status code: %d", filePath, resp.StatusCode)
 	}
 
@@ -37,7 +43,7 @@ func getSHAOfFile(filePath string) (string, error) {
 		SHA string `json:"sha"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to decode GitHub SHA response: %w", err)
 	}
 	return data.SHA, nil
 }

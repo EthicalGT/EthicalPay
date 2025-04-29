@@ -211,6 +211,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	fmt.Println("\n ENV : " + os.Getenv("GITHUB_TOKEN"))
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
