@@ -180,6 +180,28 @@ func sendEmailHandler(c echo.Context, otp int64, to string, subject string, body
 		return c.HTML(http.StatusAccepted, "<script>alert('Email sent successfully!');</script>")
 	}
 }
+func saveDataToGitHub() {
+	files := []struct {
+		localPath string
+		repoPath  string
+	}{
+		{"static/db/users.json", "static/db/users.json"},
+		{"static/db/otp.json", "static/db/otp.json"},
+		{"static/db/transactions.json", "static/db/transactions.json"},
+		{"static/db/api.json", "static/db/api.json"},
+	}
+
+	for _, f := range files {
+		go func(f struct{ localPath, repoPath string }) {
+			err := pushFileToGitHub(f.localPath, f.repoPath)
+			if err != nil {
+				log.Println("❌ Failed to push:", f.repoPath, "-", err)
+			} else {
+				log.Println("✅ Successfully pushed:", f.repoPath)
+			}
+		}(f)
+	}
+}
 
 func main() {
 	//key := "GT'SEra"
@@ -270,7 +292,7 @@ func main() {
 		document.body.appendChild(form);
 		form.submit();
 		</script></body></html>`
-
+		saveDataToGitHub()
 		return c.HTML(http.StatusOK, msg)
 	})
 
@@ -328,7 +350,7 @@ func main() {
 		if err := writeData(userFile, users); err != nil {
 			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong while registering!'); window.location='/';</script>")
 		}
-
+		saveDataToGitHub()
 		return c.HTML(http.StatusOK, "<script>alert('Registered Successfully. Kindly Login.'); window.location='/';</script>")
 	})
 
@@ -469,7 +491,7 @@ func main() {
 			if err := writeData(apiFile, []Api{newAPI}); err != nil {
 				return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 			}
-
+			saveDataToGitHub()
 			return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 		}
 
@@ -493,7 +515,7 @@ func main() {
 		if err := writeData(apiFile, apis); err != nil {
 			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 		}
-
+		saveDataToGitHub()
 		return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 	})
 
