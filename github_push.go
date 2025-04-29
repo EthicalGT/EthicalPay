@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	githubUsername = "EthicalGT"
-	repoName       = "EthicalPay"
+	githubUsername = "your_github_username"
+	repoName       = "ethicalpay"
 	branch         = "main" // or "master"
 )
 
@@ -20,9 +20,8 @@ func getSHAOfFile(filePath string) (string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/contents/%s?ref=%s",
 		githubUsername, repoName, filePath, branch)
 
-	mytoken := "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"
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "token "+mytoken)
+	req.Header.Set("Authorization", "token "+os.Getenv("GITHUB_TOKEN"))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
