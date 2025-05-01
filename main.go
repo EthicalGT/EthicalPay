@@ -502,7 +502,7 @@ func main() {
 			if err := writeData(apiFile, []Api{newAPI}); err != nil {
 				return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 			}
-			//saveDataToGitHub()
+			saveDataToGitHub([]string{"api.json"})
 			return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 		}
 
@@ -526,7 +526,7 @@ func main() {
 		if err := writeData(apiFile, apis); err != nil {
 			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 		}
-		//saveDataToGitHub()
+		saveDataToGitHub([]string{"api.json"})
 		return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 	})
 
@@ -642,7 +642,7 @@ func main() {
         document.body.appendChild(form);
         form.submit();
 </script></body></html>`
-
+			saveDataToGitHub([]string{"transactions.json"})
 			return c.HTML(http.StatusOK, msg)
 
 		}
@@ -750,7 +750,7 @@ func main() {
 			template.JSEscapeString(time.Now().Format(time.RFC3339)),
 			template.JSEscapeString(methodCookie.Value),
 			template.JSEscapeString(costCookie.Value))
-
+		saveDataToGitHub([]string{"transactions.json"})
 		return c.HTML(http.StatusOK, msg)
 	})
 
