@@ -192,7 +192,7 @@ func saveDataToGitHub(requiredFiles []string) {
 	for _, file := range requiredFiles {
 		localPath, exists := fileMap[file]
 		if !exists {
-			log.Println("⚠️ Unknown file requested:", file)
+			log.Println("Unknown file requested:", file)
 			continue
 		}
 		repoPath := localPath
@@ -200,9 +200,9 @@ func saveDataToGitHub(requiredFiles []string) {
 		go func(localPath, repoPath string) {
 			err := pushFileToGitHub(localPath, repoPath)
 			if err != nil {
-				log.Println("❌ Failed to push:", repoPath, "-", err)
+				log.Println("Failed to push:", repoPath, "-", err)
 			} else {
-				log.Println("✅ Successfully pushed:", repoPath)
+				log.Println("Successfully pushed:", repoPath)
 			}
 		}(localPath, repoPath)
 	}
