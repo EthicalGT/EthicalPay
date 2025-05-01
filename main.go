@@ -502,7 +502,7 @@ func main() {
 			if err := writeData(apiFile, []Api{newAPI}); err != nil {
 				return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 			}
-			saveDataToGitHub()
+			//saveDataToGitHub()
 			return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 		}
 
@@ -526,7 +526,7 @@ func main() {
 		if err := writeData(apiFile, apis); err != nil {
 			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to save API record!'); window.location='/api';</script>")
 		}
-		saveDataToGitHub()
+		//saveDataToGitHub()
 		return c.HTML(http.StatusOK, "<script>alert('API Key Generated Successfully!'); window.location='/api';</script>")
 	})
 
