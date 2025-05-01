@@ -15,7 +15,6 @@ import (
 
 	"log"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/crypto/bcrypt"
@@ -196,7 +195,7 @@ func saveDataToGitHub(requiredFiles []string) {
 			log.Println("⚠️ Unknown file requested:", file)
 			continue
 		}
-		repoPath := localPath // assuming repoPath is same as localPath
+		repoPath := localPath
 
 		go func(localPath, repoPath string) {
 			err := pushFileToGitHub(localPath, repoPath)
@@ -211,11 +210,12 @@ func saveDataToGitHub(requiredFiles []string) {
 
 func main() {
 	//key := "GT'SEra"
-	err := godotenv.Load()
+	/*err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 	fmt.Println("\n ENV : " + os.Getenv("GITHUB_TOKEN"))
+	*/
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

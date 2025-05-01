@@ -20,7 +20,7 @@ func getSHAOfFile(filePath string) (string, error) {
 		githubUsername, repoName, filePath, branch)
 
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "token "+os.Getenv("GITHUB_TOKEN"))
+	req.Header.Set("Authorization", "token "+"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")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
