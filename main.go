@@ -182,26 +182,30 @@ func sendEmailHandler(c echo.Context, otp int64, to string, subject string, body
 		return c.HTML(http.StatusAccepted, "<script>alert('Email sent successfully!');</script>")
 	}
 }
-func saveDataToGitHub() {
-	files := []struct {
-		localPath string
-		repoPath  string
-	}{
-		{"static/db/users.json", "static/db/users.json"},
-		{"static/db/otp.json", "static/db/otp.json"},
-		{"static/db/transactions.json", "static/db/transactions.json"},
-		{"static/db/api.json", "static/db/api.json"},
+func saveDataToGitHub(requiredFiles []string) {
+	fileMap := map[string]string{
+		"users.json":        "static/db/users.json",
+		"otp.json":          "static/db/otp.json",
+		"transactions.json": "static/db/transactions.json",
+		"api.json":          "static/db/api.json",
 	}
 
-	for _, f := range files {
-		go func(f struct{ localPath, repoPath string }) {
-			err := pushFileToGitHub(f.localPath, f.repoPath)
+	for _, file := range requiredFiles {
+		localPath, exists := fileMap[file]
+		if !exists {
+			log.Println("⚠️ Unknown file requested:", file)
+			continue
+		}
+		repoPath := localPath // assuming repoPath is same as localPath
+
+		go func(localPath, repoPath string) {
+			err := pushFileToGitHub(localPath, repoPath)
 			if err != nil {
-				log.Println("❌ Failed to push:", f.repoPath, "-", err)
+				log.Println("❌ Failed to push:", repoPath, "-", err)
 			} else {
-				log.Println("✅ Successfully pushed:", f.repoPath)
+				log.Println("✅ Successfully pushed:", repoPath)
 			}
-		}(f)
+		}(localPath, repoPath)
 	}
 }
 
@@ -299,7 +303,7 @@ func main() {
 		document.body.appendChild(form);
 		form.submit();
 		</script></body></html>`
-		saveDataToGitHub()
+		saveDataToGitHub([]string{"otp.json"})
 		return c.HTML(http.StatusOK, msg)
 	})
 
@@ -357,7 +361,7 @@ func main() {
 		if err := writeData(userFile, users); err != nil {
 			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong while registering!'); window.location='/';</script>")
 		}
-		saveDataToGitHub()
+		saveDataToGitHub([]string{"users.json"})
 		return c.HTML(http.StatusOK, "<script>alert('Registered Successfully. Kindly Login.'); window.location='/';</script>")
 	})
 
