@@ -191,6 +191,7 @@ func saveDataToGitHub(requiredFiles []string) {
 	fileMap := map[string]string{
 		"users.json":        "static/db/users.json",
 		"otp.json":          "static/db/otp.json",
+		"otp2.json":         "static/db/otp2.json",
 		"transactions.json": "static/db/transactions.json",
 		"api.json":          "static/db/api.json",
 	}

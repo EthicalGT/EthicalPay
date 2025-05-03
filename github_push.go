@@ -29,7 +29,6 @@ func getSHAOfFile(filePath string) (string, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		// Try to read the error response body from GitHub
 		var errorBody bytes.Buffer
 		_, _ = errorBody.ReadFrom(resp.Body)
 
@@ -48,7 +47,6 @@ func getSHAOfFile(filePath string) (string, error) {
 	return data.SHA, nil
 }
 
-// Push any file to GitHub
 func pushFileToGitHub(localFilePath, repoFilePath string) error {
 	fileContent, err := os.ReadFile(localFilePath)
 	if err != nil {
