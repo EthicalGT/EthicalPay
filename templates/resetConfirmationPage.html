@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>EthicalPay</title>
+    <title>EthicalPay - Forgot Password</title>
     <link rel="stylesheet" href="/static/css/styles.css"> 
     <link rel="icon" href="/static/img/logo.png">
 </head>
@@ -39,19 +39,17 @@
         <div class="accessContainer">
             {{if .email}}
                 <div class="OTPValidationContainer">
-                    <h2>EthicalPay - OTP Validation</h2>
-                <form action="/userRegistration" method="POST" name="OTPValidationForm" onsubmit="return validateIII()">
-                    <label for="tb">OTP: </label><br>
-                    <input type="text" name="tb" maxlength="6" placeholder="Enter OTP..." required><br>
-                    <input type="hidden" name="tb1" value={{.name}}>
-                    <input type="hidden" name="tb2" value={{.email}}>
-                    <input type="hidden" name="tb3" value={{.pwd}}>
-                    <input type="submit" name="submit" value="Register">
+                    <h2>EthicalPay - Email Verification</h2>
+                <form action="/resetIV" method="POST" name="OTPValidationForm" onsubmit="return validate()">
+                    <label for="tb">Set Password: </label><br>
+                    <input type="password" name="tb" placeholder="Set your new password.." required><br>
+                    <input type="hidden" name="email" value={{.email}}>
+                    <input type="submit" name="submit" value="Confirm">
                     </form>
                     </div>
-                {{else}}
-                <p>Something went wrong. Please try again after some time.</p>
-                {{end}}
+                    {{else}}
+                    <p>Something went wrong!</p>
+                    {{end}}
                 </div>
         </main>
         <footer>
@@ -75,9 +73,9 @@
     fadeInOnScroll(); 
 });
         function validateIII(){
-            const otpPatt = /^[0-9]{6}$/;
-            if(!otpPatt.test(document.forms['OTPValidationForm']['tb'].value.trim())){
-                alert('OTP should be 6 digit long.');
+            let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,12}$/;
+            if(!passwordRegex.test(document.forms['OTPValidationForm']['tb'].value.trim())){
+                alert('Password must be 8-12 characters long, with at least 1 uppercase, 1 lowercase, 1 number, and 1 special character!');
                 return false;
             } 
             return true;

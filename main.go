@@ -58,6 +58,12 @@ type OTP struct {
 	CreatedOn string `json:"createdon"`
 }
 
+type OTP2 struct {
+	Email     string `json:"email"`
+	Otp       int64  `json:otp`
+	CreatedOn string `json:"createdon"`
+}
+
 func readData[T any](filePath string) ([]T, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
@@ -314,6 +320,128 @@ func main() {
 			"email": c.FormValue("tb2"),
 			"pwd":   c.FormValue("tb3"),
 		})
+	})
+
+	e.GET("/resetI", func(c echo.Context) error {
+		return c.Render(http.StatusOK, "resetPWD.html", nil)
+	})
+
+	e.POST("/resetII", func(c echo.Context) error {
+		rand.Seed(time.Now().UnixNano())
+		otp := rand.Intn(900000) + 100000
+		email := c.FormValue("tb")
+
+		const userFile = "static/db/users.json"
+		users, err := readData[User](userFile)
+		found := false
+		if err == nil {
+			for _, user := range users {
+				if user.Email == email {
+					found = true
+					break
+				}
+			}
+		}
+		if !found {
+			return c.HTML(http.StatusConflict, "<script>alert('User not found! Please try to signup.'); window.location='/';</script>")
+		}
+
+		const otp2File = "static/db/otp2.json"
+		otps, _ := readData[OTP2](otp2File)
+
+		newOTP := OTP2{
+			Email:     email,
+			Otp:       int64(otp),
+			CreatedOn: time.Now().Format(time.RFC3339),
+		}
+		otps = append(otps, newOTP)
+
+		if err := writeData(otp2File, otps); err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to update OTP DB!'); window.location='/';</script>")
+		}
+
+		saveDataToGitHub([]string{"otp2.json"})
+
+		if err := sendEmailHandler(c, int64(otp), email, "EthicalPay - OTP Code for Password Reset", "Greetings, Your One-Time Password (OTP) for password reset is: "); err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to send OTP email!'); window.location='/';</script>")
+		}
+		return c.Render(http.StatusOK, "resetPage.html", map[string]interface{}{
+			"email": c.FormValue("tb"),
+		})
+	})
+
+	e.POST("/resetIII", func(c echo.Context) error {
+		email := c.FormValue("email")
+		enteredOtp := c.FormValue("tb")
+
+		const otpFile = "static/db/otp2.json"
+		otps, err := readData[OTP2](otpFile)
+		if err != nil {
+			return c.HTML(http.StatusConflict, "<script>alert('Something went wrong reading OTPs!'); window.location='/';</script>")
+		}
+
+		otpMatched := false
+		otpExpired := false
+		var updatedOtps []OTP2
+
+		for _, otpRecord := range otps {
+			if otpRecord.Email == email && strconv.FormatInt(otpRecord.Otp, 10) == enteredOtp {
+				createdTime, err := time.Parse(time.RFC3339, otpRecord.CreatedOn)
+				if err != nil || time.Since(createdTime) > 5*time.Minute {
+					otpExpired = true
+					updatedOtps = append(updatedOtps, otpRecord)
+				} else {
+					otpMatched = true
+				}
+			} else {
+				updatedOtps = append(updatedOtps, otpRecord)
+			}
+		}
+		_ = writeData(otpFile, updatedOtps)
+
+		if otpExpired {
+			return c.HTML(http.StatusConflict, "<script>alert('OTP has expired. Please request a new one.'); window.location='/';</script>")
+		}
+		if !otpMatched {
+			return c.HTML(http.StatusConflict, "<script>alert('OTP verification failed! Please try again.'); window.location='/';</script>")
+		}
+		return c.Render(http.StatusOK, "resetConfirmationPage.html", map[string]interface{}{
+			"email": email,
+		})
+	})
+
+	e.POST("/resetIV", func(c echo.Context) error {
+		const userFile = "static/db/users.json"
+		email := c.FormValue("email")
+
+		users, err := readData[User](userFile)
+		if err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Something went wrong. Please try again later!'); window.location='/';</script>")
+		}
+
+		mypwd, err := HashPassword(c.FormValue("tb"))
+		if err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Server is Busy! Try after some time.'); window.location='/';</script>")
+		}
+
+		updated := false
+		for i := range users {
+			if strings.EqualFold(users[i].Email, email) {
+				users[i].Password = mypwd
+				updated = true
+				break
+			}
+		}
+
+		if !updated {
+			return c.HTML(http.StatusNotFound, "<script>alert('User not found!'); window.location='/';</script>")
+		}
+
+		if err := writeData(userFile, users); err != nil {
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to update password!'); window.location='/';</script>")
+		}
+		saveDataToGitHub([]string{"users.json"})
+		return c.HTML(http.StatusAccepted, "<script>alert('Password changed successfully. You can signin now!'); window.location='/';</script>")
 	})
 
 	e.POST("/userRegistration", func(c echo.Context) error {

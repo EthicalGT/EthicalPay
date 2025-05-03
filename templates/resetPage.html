@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>EthicalPay</title>
+    <title>EthicalPay - Forgot Password</title>
     <link rel="stylesheet" href="/static/css/styles.css"> 
     <link rel="icon" href="/static/img/logo.png">
 </head>
@@ -40,18 +40,17 @@
             {{if .email}}
                 <div class="OTPValidationContainer">
                     <h2>EthicalPay - OTP Validation</h2>
-                <form action="/userRegistration" method="POST" name="OTPValidationForm" onsubmit="return validateIII()">
+                <form action="/resetIII" method="POST" name="OTPValidationForm" onsubmit="return validate()">
                     <label for="tb">OTP: </label><br>
                     <input type="text" name="tb" maxlength="6" placeholder="Enter OTP..." required><br>
-                    <input type="hidden" name="tb1" value={{.name}}>
-                    <input type="hidden" name="tb2" value={{.email}}>
-                    <input type="hidden" name="tb3" value={{.pwd}}>
+                    <input type="hidden" name="email" value={{.email}}>
                     <input type="submit" name="submit" value="Register">
                     </form>
+                    
                     </div>
-                {{else}}
-                <p>Something went wrong. Please try again after some time.</p>
-                {{end}}
+                    {{else}}
+                    <p>Something went wrong!</p>
+                    {{end}}
                 </div>
         </main>
         <footer>
@@ -74,7 +73,7 @@
     window.addEventListener("scroll", fadeInOnScroll);
     fadeInOnScroll(); 
 });
-        function validateIII(){
+        function validate(){
             const otpPatt = /^[0-9]{6}$/;
             if(!otpPatt.test(document.forms['OTPValidationForm']['tb'].value.trim())){
                 alert('OTP should be 6 digit long.');
