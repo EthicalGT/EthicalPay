@@ -253,7 +253,7 @@ func main() {
 		}
 
 		if err := sendEmailHandler(c, int64(otp), email, "EthicalPay - OTP Code for Verification", "Greetings, Your One-Time Password (OTP) for verification is: "); err != nil {
-			return c.HTML(http.StatusInternalServerError, "<script>alert('Failed to send OTP email!'); window.location='/';</script>")
+			return c.HTML(http.StatusInternalServerError, "<script>alert('Oops! We couldn’t send the OTP email. This may be due to your inbox storage being full. Please clear some space and try again. or There might be network issue kindly check your internet connection.'); window.location='/';</script>")
 		}
 
 		pwd, err := HashPassword(c.FormValue("tb3"))
