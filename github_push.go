@@ -20,7 +20,7 @@ func getSHAOfFile(filePath string) (string, error) {
 		githubUsername, repoName, filePath, branch)
 
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Set("Authorization", "token "+"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")
+	req.Header.Set("Authorization", "token "+"xxxxxx")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -74,7 +74,7 @@ func pushFileToGitHub(localFilePath, repoFilePath string) error {
 	jsonBody, _ := json.Marshal(payload)
 
 	req, _ := http.NewRequest("PUT", url, bytes.NewReader(jsonBody))
-	req.Header.Set("Authorization", "token "+"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")
+	req.Header.Set("Authorization", "token "+"xxxxxx")
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
